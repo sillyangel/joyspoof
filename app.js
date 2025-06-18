@@ -121,44 +121,34 @@ createPresetColors() {
             ...(this.presets.SpecialColors || [])
         ];
         
-        // Create a map to store color -> preset names
-        const colorToNames = new Map();
-        
+        // Create individual color elements for each preset
         allPresets.forEach(preset => {
-            // Add body color mappings
+            let color = null;
+            
+            // Determine which color to use based on target
             if (targetId === 'body-color' || targetId === 'left-grip-color' || targetId === 'right-grip-color') {
-                if (!colorToNames.has(preset.bodyHex)) {
-                    colorToNames.set(preset.bodyHex, []);
-                }
-                colorToNames.get(preset.bodyHex).push(preset.name);
+                color = preset.bodyHex;
+            } else if (targetId === 'button-color') {
+                color = preset.buttonHex;
             }
-            // Add button color mappings
-            if (targetId === 'button-color') {
-                if (!colorToNames.has(preset.buttonHex)) {
-                    colorToNames.set(preset.buttonHex, []);
-                }
-                colorToNames.get(preset.buttonHex).push(preset.name);
+            
+            if (color) {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'preset-color';
+                colorDiv.style.backgroundColor = color;
+                
+                // Create tooltip text with color hex and preset name
+                const tooltip = `${color}\n${preset.name}`;
+                colorDiv.setAttribute('data-tooltip', tooltip);
+                colorDiv.title = tooltip;
+                
+                colorDiv.addEventListener('click', () => {
+                    document.getElementById(targetId).value = color;
+                    this.updateControllerColor(targetId, color);
+                });
+                
+                container.appendChild(colorDiv);
             }
-        });
-        
-        // Create color elements with custom tooltips
-        colorToNames.forEach((names, color) => {
-            const colorDiv = document.createElement('div');
-            colorDiv.className = 'preset-color';
-            colorDiv.style.backgroundColor = color;
-            
-            // For custom CSS tooltip
-            const tooltipText = `${color}\n${names.join('\n')}`;
-            colorDiv.setAttribute('data-tooltip', tooltipText);
-            
-            // Fallback title attribute for accessibility
-            colorDiv.title = tooltipText;
-            
-            colorDiv.addEventListener('click', () => {
-                document.getElementById(targetId).value = color;
-                this.updateControllerColor(targetId, color);
-            });
-            container.appendChild(colorDiv);
         });
     });
 }
