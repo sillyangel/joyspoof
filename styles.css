@@ -191,8 +191,8 @@ body {
 
 /* Regular buttons */
 button:not(.connect-btn) {
-    background: #007bff;
-    color: white;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
     border: none;
     padding: 12px 24px;
     border-radius: 8px;
@@ -203,7 +203,7 @@ button:not(.connect-btn) {
 }
 
 button:not(.connect-btn):hover {
-    background: #0056b3;
+    background: rgb(183, 183, 183);
 }
 
 button:not(.connect-btn):disabled {
