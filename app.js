@@ -43,29 +43,36 @@ async function connectController() {
   }
 }
 
-const presetColors = [
-  "#828282",
-  "#0AB9E6",
-  "#FF3C28",
-  "#E6FF00",
-  "#1EDC00",
-  "#FF3278",
-  "#E10F00",
-  "#4655F5",
-  "#B400E6",
-  "#FAA005",
-  "#FFFFFF",
-];
-
+// Remove the old presetColors array and add this function
+async function loadPresets() {
+  try {
+    const response = await fetch('./presets.json');
+    const presets = await response.json();
+    return presets;
+  } catch (error) {
+    console.error('Failed to load presets:', error);
+    // Fallback to basic colors if presets.json fails to load
+    return {
+      Retails: [
+        { name: "Gray", bodyHex: "#828282", buttonHex: "#0F0F0F" },
+        { name: "Neon Blue", bodyHex: "#0AB9E6", buttonHex: "#001E1E" },
+        { name: "Neon Red", bodyHex: "#FF3C28", buttonHex: "#1E0A0A" }
+      ]
+    };
+  }
+}
 
 class JoyConApp {
     constructor() {
         this.controller = null;
         this.originalColors = {};
+        this.presets = null;
         this.initializeApp();
     }
 
-    initializeApp() {
+    async initializeApp() {
+        // Load presets first
+        this.presets = await loadPresets();
         this.setupEventListeners();
         this.createPresetColors();
         this.checkHIDSupport();
@@ -100,12 +107,35 @@ class JoyConApp {
     }
 
     createPresetColors() {
+        if (!this.presets) return;
+        
         const presetContainers = document.querySelectorAll('.preset-colors');
         
         presetContainers.forEach(container => {
             const targetId = container.dataset.target;
             
-            presetColors.forEach(color => {
+            // Combine all presets from different categories
+            const allPresets = [
+                ...this.presets.Retails,
+                ...(this.presets.SpecialColors || [])
+            ];
+            
+            // Create a set to avoid duplicate colors
+            const uniqueColors = new Set();
+            
+            allPresets.forEach(preset => {
+                // Add body color if it's for body-color input or general use
+                if (targetId === 'body-color' || targetId === 'left-grip-color' || targetId === 'right-grip-color') {
+                    uniqueColors.add(preset.bodyHex);
+                }
+                // Add button color if it's for button-color input
+                if (targetId === 'button-color') {
+                    uniqueColors.add(preset.buttonHex);
+                }
+            });
+            
+            // Convert set back to array and create color elements
+            Array.from(uniqueColors).forEach(color => {
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'preset-color';
                 colorDiv.style.backgroundColor = color;
@@ -139,6 +169,7 @@ class JoyConApp {
         }
     }
 
+    // ...existing code...
     displayControllerInfo() {
         if (!this.controller) return;
         document.getElementById('product-name').textContent = this.controller.productName;
@@ -183,6 +214,7 @@ class JoyConApp {
         }
         this.updateAllControllerColors();
     }
+
     updateControllerColor(inputId, color) {
         if (!this.controller) return;
         const colorMap = {
@@ -197,6 +229,7 @@ class JoyConApp {
             this.updatePreview();
         }
     }
+
     updateAllControllerColors() {
         if (!this.controller) return;
         this.controller.bodyColor = document.getElementById('body-color').value;
@@ -205,12 +238,14 @@ class JoyConApp {
         this.controller.rightGripColor = document.getElementById('right-grip-color').value;
         this.updatePreview();
     }
+
     updatePreview() {
         const controllerImage = document.getElementById('controller-image');
         if (controllerImage.contentDocument) {
             previewColor(controllerImage, this.controller);
         }
     }
+
     async submitColors() {
         if (!this.controller) return;
         const submitBtn = document.getElementById('submit-color-btn');
@@ -227,6 +262,7 @@ class JoyConApp {
             submitBtn.textContent = 'Submit Colors';
         }
     }
+
     resetColors() {
         if (!this.controller || !this.originalColors.bodyColor) return;
         document.getElementById('body-color').value = this.originalColors.bodyColor;
@@ -235,14 +271,17 @@ class JoyConApp {
         document.getElementById('right-grip-color').value = this.originalColors.rightGripColor;
         this.updateAllControllerColors();
     }
+
     showControllerSection() {
         document.getElementById('controller-section').classList.remove('hidden');
     }
+
     showError(message) {
         const errorDiv = document.getElementById('error-message');
         errorDiv.textContent = message;
         errorDiv.classList.remove('hidden');
     }
+
     hideError() {
         document.getElementById('error-message').classList.add('hidden');
     }
