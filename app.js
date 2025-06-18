@@ -1,5 +1,60 @@
 import { NSControllers } from "./joycon-utils.js";
 
+class ThemeManager {
+    constructor() {
+        this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
+        this.applyTheme(this.currentTheme);
+        this.setupThemeToggle();
+    }
+
+    getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    getStoredTheme() {
+        return localStorage.getItem('joyspoof-theme');
+    }
+
+    storeTheme(theme) {
+        localStorage.setItem('joyspoof-theme', theme);
+    }
+
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        this.currentTheme = theme;
+        this.updateThemeToggleIcon();
+    }
+
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.applyTheme(newTheme);
+        this.storeTheme(newTheme);
+    }
+
+    updateThemeToggleIcon() {
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.textContent = this.currentTheme === 'dark' ? '☀️' : '🌙';
+            themeToggle.title = `Switch to ${this.currentTheme === 'dark' ? 'light' : 'dark'} mode`;
+        }
+    }
+
+    setupThemeToggle() {
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+            this.updateThemeToggleIcon();
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!this.getStoredTheme()) {
+                this.applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    }
+}
+
 function previewColor(object, controller) {
   const sheet = object.contentDocument?.querySelector("style")?.sheet;
   if (!sheet) return;
@@ -65,6 +120,7 @@ class JoyConApp {
         this.controllers = [];
         this.presets = null;
         this.controllerCount = 0;
+        this.ThemeManager = new ThemeManager();
         this.initializeApp();
     }
 
