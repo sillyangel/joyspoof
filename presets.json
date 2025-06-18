@@ -1,0 +1,226 @@
+{
+    "Retails": [
+        {
+            "name": "Gray",
+            "bodyHex": "#828282",
+            "buttonHex": "#0F0F0F"
+        },
+        {
+            "name": "Neon Red",
+            "bodyHex": "#FF3C28",
+            "buttonHex": "#1E0A0A"
+        },
+        {
+            "name": "Neon Blue",
+            "bodyHex": "#0AB9E6",
+            "buttonHex": "#001E1E"
+        },
+        {
+            "name": "Neon Yellow",
+            "bodyHex": "#E6FF00",
+            "buttonHex": "#142800"
+        },
+        {
+            "name": "Neon Green",
+            "bodyHex": "#1EDC00",
+            "buttonHex": "#002800"
+        },
+        {
+            "name": "Neon Pink",
+            "bodyHex": "#FF3278",
+            "buttonHex": "#28001E"
+        },
+        {
+            "name": "Red",
+            "bodyHex": "#E10F00",
+            "buttonHex": "#280A0A"
+        },
+        {
+            "name": "Blue",
+            "bodyHex": "#4655F5",
+            "buttonHex": "#00000A"
+        },
+        {
+            "name": "Neon Purple",
+            "bodyHex": "#B400E6",
+            "buttonHex": "#140014"
+        },
+        {
+            "name": "Neon Orange",
+            "bodyHex": "#FAA005",
+            "buttonHex": "#0F0A00"
+        },
+        {
+            "name": "White",
+            "bodyHex": "#E6E6E6",
+            "buttonHex": "#323232"
+        },
+        {
+            "name": "Pastel Pink",
+            "bodyHex": "#FFAFAF",
+            "buttonHex": "#372D2D"
+        },
+        {
+            "name": "Pastel Yellow",
+            "bodyHex": "#F5FF82",
+            "buttonHex": "#32332D"
+        },
+        {
+            "name": "Pastel Purple",
+            "bodyHex": "#F0CBEB",
+            "buttonHex": "#373037"
+        },
+        {
+            "name": "Pastel Green",
+            "bodyHex": "#BCFFC8",
+            "buttonHex": "#2D322D"
+        }
+    ],
+    "SpecialColors": [
+        {
+            "name": "Gray Joy-Con",
+            "bodyHex": "#828282",
+            "buttonHex": "#0F0F0F"
+        },
+        {
+            "name": "Neon-Blue Left Joy-Con",
+            "bodyHex": "#0AB9E6",
+            "buttonHex": "#001E1E"
+        },
+        {
+            "name": "Neon-Red Right Joy-Con",
+            "bodyHex": "#FF3C28",
+            "buttonHex": "#1E0A0A"
+        },
+        {
+            "name": "Splatoon 2 Edition Neon-Green Left Joy-Con",
+            "bodyHex": "#1EDC00",
+            "buttonHex": "#002800"
+        },
+        {
+            "name": "Splatoon 2 Edition Neon-Pink Right Joy-Con",
+            "bodyHex": "#FF3278",
+            "buttonHex": "#28001E"
+        },
+        {
+            "name": "Super Mario Odyssey Edition Red Joy-Con",
+            "bodyHex": "#E10F00",
+            "buttonHex": "#280A0A"
+        },
+        {
+            "name": "Super Smash Bros. Ultimate Edition Gray Joy-Con",
+            "bodyHex": "#828282",
+            "buttonHex": "#0F0F0F"
+        },
+        {
+            "name": "Pokémon: Let's Go! Edition Eevee-Brown Left Joy-Con",
+            "bodyHex": "#C88C32",
+            "buttonHex": "#281900"
+        },
+        {
+            "name": "Pokémon: Let's Go! Edition Pikachu-Yellow Right Joy-Con",
+            "bodyHex": "#FFDC00",
+            "buttonHex": "#322800"
+        },
+        {
+            "name": "Nintendo Labo Creators Contest Edition \"Cardboard\"-Colored Joy-Con",
+            "bodyHex": "#D7AA73",
+            "buttonHex": "#1E1914"
+        },
+        {
+            "name": "Dragon Quest XI S Lotto Edition Royal-Blue Joy-Con",
+            "bodyHex": "#1473FA",
+            "buttonHex": "#00000F"
+        },
+        {
+            "name": "Disney Tsum Tsum Festival Edition Neon-Purple Left Joy-Con",
+            "bodyHex": "#B400E6",
+            "buttonHex": "#140014"
+        },
+        {
+            "name": "Disney Tsum Tsum Festival Edition Neon-Pink Right Joy-Con",
+            "bodyHex": "#FF3278",
+            "buttonHex": "#28001E"
+        },
+        {
+            "name": "Animal Crossing: New Horizons Edition Pastel-Green Left Joy-Con",
+            "bodyHex": "#82FF96",
+            "buttonHex": "#0A1E0A"
+        },
+        {
+            "name": "Animal Crossing: New Horizons Edition Pastel-Blue Right Joy-Con",
+            "bodyHex": "#96F5F5",
+            "buttonHex": "#0A1E28"
+        },
+        {
+            "name": "Fortnite Wildcat Edition Yellow Left Joy-Con",
+            "bodyHex": "#FFCC00",
+            "buttonHex": "#1A1100"
+        },
+        {
+            "name": "Fortnite Wildcat Edition Dark-Blue Right Joy-Con",
+            "bodyHex": "#0084FF",
+            "buttonHex": "#000F1E"
+        },
+        {
+            "name": "Mario Red x Blue Edition Red Joy-Con",
+            "bodyHex": "#F04614",
+            "buttonHex": "#1E1914"
+        },
+        {
+            "name": "Monster Hunter Rise Edition Gray Joy-Con",
+            "bodyHex": "#818282",
+            "buttonHex": "#0E0F0F"
+        },
+        {
+            "name": "Fortnite Fleet Force Edition Dark-Blue Left Joy-Con",
+            "bodyHex": "#0084FF",
+            "buttonHex": "#000F1E"
+        },
+        {
+            "name": "Fortnite Fleet Force Edition Yellow Right Joy-Con",
+            "bodyHex": "#FFCC00",
+            "buttonHex": "#1A1100"
+        },
+        {
+            "name": "Legend of Zelda: Skyward Sword Edition Dark-Blue Left Joy-Con",
+            "bodyHex": "#2D50F0",
+            "buttonHex": "#1E0F46"
+        },
+        {
+            "name": "Legend of Zelda: Skyward Sword Edition Dark-Purple Right Joy-Con",
+            "bodyHex": "#500FC8",
+            "buttonHex": "#00051E"
+        },
+        {
+            "name": "OLED Edition White Joy-Con",
+            "bodyHex": "#E6E6E6",
+            "buttonHex": "#323232"
+        },
+        {
+            "name": "Splatoon 3 OLED Edition Blue-Gradient Left Joy-Con",
+            "bodyHex": "#6455F5",
+            "buttonHex": "#28282D"
+        },
+        {
+            "name": "Splatoon 3 OLED Edition Neon-Yellow-Gradient Right Joy-Con",
+            "bodyHex": "#C3FA05",
+            "buttonHex": "#1E1E28"
+        },
+        {
+            "name": "Pokémon: Scarlet x Violet OLED Edition Scarlet Left Joy-Con",
+            "bodyHex": "#F07341",
+            "buttonHex": "#322D1E"
+        },
+        {
+            "name": "Pokémon: Scarlet x Violet Right Joy-Con",
+            "bodyHex": "#9650AA",
+            "buttonHex": "#32322D"
+        },
+        {
+            "name": "Legend of Zelda: Tears of the Kingdom Edition Gold Joy-Con",
+            "bodyHex": "#D2BE69",
+            "buttonHex": "#32322D"
+        }
+    ]
+}

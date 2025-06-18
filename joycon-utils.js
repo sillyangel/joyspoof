@@ -42,7 +42,7 @@ const ColorType = {
   FullCustom: 2,
 };
 
-export class Controller {
+export class NSControllers {
   _device;
   macAddr = "";
   bodyColor;
