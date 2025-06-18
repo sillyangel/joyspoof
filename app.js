@@ -88,86 +88,146 @@ class JoyConApp {
     }
 
     createControllerSection(controller, index) {
-        const controllerSection = document.createElement('div');
-        controllerSection.className = 'controller-section';
-        controllerSection.id = `controller-section-${index}`;
+    const controllerSection = document.createElement('div');
+    controllerSection.className = 'controller-section';
+    controllerSection.id = `controller-section-${index}`;
 
-        // Add HR divider if not the first controller
-        if (index > 0) {
-            const divider = document.createElement('hr');
-            divider.className = 'controller-divider';
-            document.getElementById('controllers-container').appendChild(divider);
+    // Add HR divider if not the first controller
+    if (index > 0) {
+        const divider = document.createElement('hr');
+        divider.className = 'controller-divider';
+        document.getElementById('controllers-container').appendChild(divider);
+    }
+
+    // Generate controller title based on type
+    const getControllerTitle = (type) => {
+        switch(type) {
+            case 'left-joycon':
+                return 'Joy-Con Left';
+            case 'right-joycon':
+                return 'Joy-Con Right';
+            case 'procon':
+                return 'Pro Controller';
+            default:
+                return 'Unknown Controller';
         }
+    };
 
-        controllerSection.innerHTML = `
-            <div class="main-container">
-                <div class="left-panel">
-                    <div class="controller-info">
-                        <h2>Controller ${index + 1} Information</h2>
-                        <div class="controller-details">
-                            <div><strong>Name:</strong> <span id="product-name-${index}"></span></div>
-                            <div><strong>Type:</strong> <span id="controller-type-${index}"></span></div>
-                            <div><strong>MAC Address:</strong> <span id="mac-address-${index}"></span></div>
-                            <div><strong>Serial Number:</strong> <span id="serial-number-${index}"></span></div>
-                            <div><strong>Firmware:</strong> <span id="firmware-${index}"></span></div>
-                            <div class="battery-info">
-                                <strong>Battery:</strong> 
-                                <span id="voltage-${index}"></span>V
-                                <object id="battery-icon-${index}" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="middle-panel">
-                    <div class="controller-preview">
-                        <object id="controller-image-${index}" type="image/svg+xml" class="controller-image"></object>
-                    </div>
-                </div>
-                
-                <div class="right-panel">
-                    <div class="color-customization">
-                        <h2>Color Customization</h2>
-                        <div class="color-inputs">
-                            <div class="color-input">
-                                <label for="body-color-${index}">Body Color</label>
-                                <input type="color" id="body-color-${index}" value="#828282">
-                                <div class="preset-colors" data-target="body-color-${index}"></div>
-                            </div>
-                            <div class="color-input">
-                                <label for="button-color-${index}">Button Color</label>
-                                <input type="color" id="button-color-${index}" value="#828282">
-                                <div class="preset-colors" data-target="button-color-${index}"></div>
-                            </div>
-                            <div class="color-input" id="left-grip-section-${index}">
-                                <label for="left-grip-color-${index}">Left Grip Color</label>
-                                <input type="color" id="left-grip-color-${index}" value="#828282">
-                                <div class="preset-colors" data-target="left-grip-color-${index}"></div>
-                            </div>
-                            <div class="color-input" id="right-grip-section-${index}">
-                                <label for="right-grip-color-${index}">Right Grip Color</label>
-                                <input type="color" id="right-grip-color-${index}" value="#828282">
-                                <div class="preset-colors" data-target="right-grip-color-${index}"></div>
-                            </div>
-                        </div>
-                        <div class="button-group">
-                            <button id="submit-color-btn-${index}">Submit Colors</button>
-                            <button id="reset-color-btn-${index}">Reset Colors</button>
-                            <button id="disconnect-btn-${index}" class="disconnect-btn">Disconnect</button>
+    const controllerTitle = getControllerTitle(controller.type);
+
+    controllerSection.innerHTML = `
+        <div class="main-container">
+            <div class="left-panel">
+                <div class="controller-info">
+                    <h2>${controllerTitle} Information</h2>
+                    <div class="controller-details">
+                        <div><strong>Name:</strong> <span id="product-name-${index}"></span></div>
+                        <div><strong>Type:</strong> <span id="controller-type-${index}"></span></div>
+                        <div><strong>MAC Address:</strong> <span id="mac-address-${index}"></span></div>
+                        <div><strong>Serial Number:</strong> <span id="serial-number-${index}"></span></div>
+                        <div><strong>Firmware:</strong> <span id="firmware-${index}"></span></div>
+                        <div class="battery-info">
+                            <strong>Battery:</strong> 
+                            <span id="voltage-${index}"></span>V
+                            <object id="battery-icon-${index}" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
+            
+            <div class="middle-panel">
+                <div class="controller-preview">
+                    <object id="controller-image-${index}" type="image/svg+xml" class="controller-image"></object>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="color-customization">
+                    <h2>Color Customization</h2>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label for="body-color-${index}">Body Color</label>
+                            <input type="color" id="body-color-${index}" value="#828282">
+                            <div class="preset-colors" data-target="body-color-${index}"></div>
+                        </div>
+                        <div class="color-input">
+                            <label for="button-color-${index}">Button Color</label>
+                            <input type="color" id="button-color-${index}" value="#828282">
+                            <div class="preset-colors" data-target="button-color-${index}"></div>
+                        </div>
+                        <div class="color-input" id="left-grip-section-${index}">
+                            <label for="left-grip-color-${index}">Left Grip Color</label>
+                            <input type="color" id="left-grip-color-${index}" value="#828282">
+                            <div class="preset-colors" data-target="left-grip-color-${index}"></div>
+                        </div>
+                        <div class="color-input" id="right-grip-section-${index}">
+                            <label for="right-grip-color-${index}">Right Grip Color</label>
+                            <input type="color" id="right-grip-color-${index}" value="#828282">
+                            <div class="preset-colors" data-target="right-grip-color-${index}"></div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button id="submit-color-btn-${index}">Submit Colors</button>
+                        <button id="reset-color-btn-${index}">Reset Colors</button>
+                        <button id="disconnect-btn-${index}" class="disconnect-btn">Disconnect</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
-        document.getElementById('controllers-container').appendChild(controllerSection);
+    document.getElementById('controllers-container').appendChild(controllerSection);
+    
+    // Setup event listeners for this controller
+    this.setupControllerEventListeners(controller, index);
+    this.createPresetColors(index);
+    this.displayControllerInfo(controller, index);
+    this.setupControllerColors(controller, index);
+}
+
+
+reindexControllers() {
+    const sections = document.querySelectorAll('.controller-section');
+    sections.forEach((section, newIndex) => {
+        section.id = `controller-section-${newIndex}`;
         
-        // Setup event listeners for this controller
-        this.setupControllerEventListeners(controller, index);
-        this.createPresetColors(index);
-        this.displayControllerInfo(controller, index);
-        this.setupControllerColors(controller, index);
-    }
+        // Update all IDs within the section
+        const elementsWithIds = section.querySelectorAll('[id]');
+        elementsWithIds.forEach(element => {
+            const oldId = element.id;
+            const baseId = oldId.replace(/-\d+$/, '');
+            element.id = `${baseId}-${newIndex}`;
+        });
+        
+        // Update data-target attributes
+        const presetContainers = section.querySelectorAll('.preset-colors');
+        presetContainers.forEach(container => {
+            const oldTarget = container.dataset.target;
+            const baseTarget = oldTarget.replace(/-\d+$/, '');
+            container.dataset.target = `${baseTarget}-${newIndex}`;
+        });
+        
+        // Update header with controller type instead of generic number
+        const header = section.querySelector('h2');
+        const controller = this.controllers[newIndex];
+        const getControllerTitle = (type) => {
+            switch(type) {
+                case 'left-joycon':
+                    return 'Joy-Con Left';
+                case 'right-joycon':
+                    return 'Joy-Con Right';
+                case 'procon':
+                    return 'Pro Controller';
+                default:
+                    return 'Unknown Controller';
+            }
+        };
+        header.textContent = `${getControllerTitle(controller.type)} Information`;
+        
+        // Re-setup event listeners
+        this.setupControllerEventListeners(this.controllers[newIndex], newIndex);
+    });
+}
 
     setupControllerEventListeners(controller, index) {
         ['body-color', 'button-color', 'left-grip-color', 'right-grip-color'].forEach(id => {
