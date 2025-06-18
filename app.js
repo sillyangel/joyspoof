@@ -106,48 +106,63 @@ class JoyConApp {
         });
     }
 
-    createPresetColors() {
-        if (!this.presets) return;
+
+createPresetColors() {
+    if (!this.presets) return;
+    
+    const presetContainers = document.querySelectorAll('.preset-colors');
+    
+    presetContainers.forEach(container => {
+        const targetId = container.dataset.target;
         
-        const presetContainers = document.querySelectorAll('.preset-colors');
+        // Combine all presets from different categories
+        const allPresets = [
+            ...this.presets.Retails,
+            ...(this.presets.SpecialColors || [])
+        ];
         
-        presetContainers.forEach(container => {
-            const targetId = container.dataset.target;
-            
-            // Combine all presets from different categories
-            const allPresets = [
-                ...this.presets.Retails,
-                ...(this.presets.SpecialColors || [])
-            ];
-            
-            // Create a set to avoid duplicate colors
-            const uniqueColors = new Set();
-            
-            allPresets.forEach(preset => {
-                // Add body color if it's for body-color input or general use
-                if (targetId === 'body-color' || targetId === 'left-grip-color' || targetId === 'right-grip-color') {
-                    uniqueColors.add(preset.bodyHex);
+        // Create a map to store color -> preset names
+        const colorToNames = new Map();
+        
+        allPresets.forEach(preset => {
+            // Add body color mappings
+            if (targetId === 'body-color' || targetId === 'left-grip-color' || targetId === 'right-grip-color') {
+                if (!colorToNames.has(preset.bodyHex)) {
+                    colorToNames.set(preset.bodyHex, []);
                 }
-                // Add button color if it's for button-color input
-                if (targetId === 'button-color') {
-                    uniqueColors.add(preset.buttonHex);
+                colorToNames.get(preset.bodyHex).push(preset.name);
+            }
+            // Add button color mappings
+            if (targetId === 'button-color') {
+                if (!colorToNames.has(preset.buttonHex)) {
+                    colorToNames.set(preset.buttonHex, []);
                 }
-            });
-            
-            // Convert set back to array and create color elements
-            Array.from(uniqueColors).forEach(color => {
-                const colorDiv = document.createElement('div');
-                colorDiv.className = 'preset-color';
-                colorDiv.style.backgroundColor = color;
-                colorDiv.title = color;
-                colorDiv.addEventListener('click', () => {
-                    document.getElementById(targetId).value = color;
-                    this.updateControllerColor(targetId, color);
-                });
-                container.appendChild(colorDiv);
-            });
+                colorToNames.get(preset.buttonHex).push(preset.name);
+            }
         });
-    }
+        
+        // Create color elements with custom tooltips
+        colorToNames.forEach((names, color) => {
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'preset-color';
+            colorDiv.style.backgroundColor = color;
+            
+            // For custom CSS tooltip
+            const tooltipText = `${color}\n${names.join('\n')}`;
+            colorDiv.setAttribute('data-tooltip', tooltipText);
+            
+            // Fallback title attribute for accessibility
+            colorDiv.title = tooltipText;
+            
+            colorDiv.addEventListener('click', () => {
+                document.getElementById(targetId).value = color;
+                this.updateControllerColor(targetId, color);
+            });
+            container.appendChild(colorDiv);
+        });
+    });
+}
+
 
     async connectToController() {
         const connectBtn = document.getElementById('connect-btn');

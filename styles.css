@@ -276,3 +276,49 @@ h2 {
         max-width: 200px;
     }
 }
+
+.preset-color {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #303030;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.preset-color:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+}
+
+/* Custom tooltip styles */
+.preset-color:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: pre-line;
+    z-index: 1000;
+    margin-bottom: 5px;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.preset-color:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+    z-index: 1001;
+}
