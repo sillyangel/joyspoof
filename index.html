@@ -3,61 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joy-Con Tool Web</title>
+    <title>JoySpoof</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1 style="color:white ">Joy-Con Tool Web</h1>
-    <div class="connect-section">
-        <button id="connect-btn" class="connect-btn" title="Connect Controller"></button>
-        <div id="error-message" class="hidden"></div>
+    <div class="header-container">
+        <h1>JoySpoof</h1>
+        <div class="connect-section">
+            <button id="connect-btn" class="connect-btn" title="Connect Controller"></button>
+            <div id="error-message" class="hidden"></div>
+        </div>
     </div>
     <div id="controller-section" class="hidden">
         <div class="main-container">
             <div class="left-panel">
                 <div class="controller-info">
                     <h2>Controller Information</h2>
-                    <div class="info-content">
-                        <div class="controller-details">
-                            <div><strong>Name:</strong> <span id="product-name"></span></div>
-                            <div><strong>Type:</strong> <span id="controller-type"></span></div>
-                            <div><strong>MAC Address:</strong> <span id="mac-address"></span></div>
-                            <div><strong>Serial Number:</strong> <span id="serial-number"></span></div>
-                            <div><strong>Firmware:</strong> <span id="firmware"></span></div>
-                            <div class="battery-info">
-                                <strong>Battery:</strong> 
-                                <span id="voltage"></span>V
-                                <object id="battery-icon" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
-                            </div>
-                        </div>
-                        <div class="controller-preview">
-                            <object id="controller-image" type="image/svg+xml" class="controller-image"></object>
+                    <div class="controller-details">
+                        <div><strong>Name:</strong> <span id="product-name"></span></div>
+                        <div><strong>Type:</strong> <span id="controller-type"></span></div>
+                        <div><strong>MAC Address:</strong> <span id="mac-address"></span></div>
+                        <div><strong>Serial Number:</strong> <span id="serial-number"></span></div>
+                        <div><strong>Firmware:</strong> <span id="firmware"></span></div>
+                        <div class="battery-info">
+                            <strong>Battery:</strong> 
+                            <span id="voltage"></span>V
+                            <object id="battery-icon" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="middle-panel">
+                <div class="controller-preview">
+                    <object id="controller-image" type="image/svg+xml" class="controller-image"></object>
+                </div>
+            </div>
+            
             <div class="right-panel">
                 <div class="color-customization">
                     <h2>Color Customization</h2>
-                    <div class="color-input">
-                        <label for="body-color">Body Color</label>
-                        <input type="color" id="body-color" value="#828282">
-                        <div class="preset-colors" data-target="body-color"></div>
-                    </div>
-                    <div class="color-input">
-                        <label for="button-color">Button Color</label>
-                        <input type="color" id="button-color" value="#828282">
-                        <div class="preset-colors" data-target="button-color"></div>
-                    </div>
-                    <div class="color-input" id="left-grip-section">
-                        <label for="left-grip-color">Left Grip Color</label>
-                        <input type="color" id="left-grip-color" value="#828282">
-                        <div class="preset-colors" data-target="left-grip-color"></div>
-                    </div>
-                    <div class="color-input" id="right-grip-section">
-                        <label for="right-grip-color">Right Grip Color</label>
-                        <input type="color" id="right-grip-color" value="#828282">
-                        <div class="preset-colors" data-target="right-grip-color"></div>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label for="body-color">Body Color</label>
+                            <input type="color" id="body-color" value="#828282">
+                            <div class="preset-colors" data-target="body-color"></div>
+                        </div>
+                        <div class="color-input">
+                            <label for="button-color">Button Color</label>
+                            <input type="color" id="button-color" value="#828282">
+                            <div class="preset-colors" data-target="button-color"></div>
+                        </div>
+                        <div class="color-input" id="left-grip-section">
+                            <label for="left-grip-color">Left Grip Color</label>
+                            <input type="color" id="left-grip-color" value="#828282">
+                            <div class="preset-colors" data-target="left-grip-color"></div>
+                        </div>
+                        <div class="color-input" id="right-grip-section">
+                            <label for="right-grip-color">Right Grip Color</label>
+                            <input type="color" id="right-grip-color" value="#828282">
+                            <div class="preset-colors" data-target="right-grip-color"></div>
+                        </div>
                     </div>
                     <div class="button-group">
                         <button id="submit-color-btn">Submit Colors</button>
