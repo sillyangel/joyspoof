@@ -1,0 +1,236 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    color:white;
+    padding: 20px;
+    background-color: #222222;
+}
+
+.main-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.left-panel {
+    flex: 2;
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.controller-info {
+    background: #202020;
+    border: 1px solid #303030;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.controller-details {
+    flex: 1;
+}
+
+.controller-details > div {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.controller-preview {
+    flex: 1;
+    text-align: center;
+}
+
+.controller-image {
+    max-width: 250px;
+    height: auto;
+}
+
+.battery-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.color-customization {
+    background: #202020;
+    border: 1px solid #303030;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-input {
+    margin: 15px 0;
+}
+
+.color-input label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.color-input input[type="color"] {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #303030;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.preset-colors {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.preset-color {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #303030;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: transform 0.2s;
+}
+
+.preset-color:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Connect button styling */
+.connect-section {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.connect-btn {
+    background: transparent;
+    border: 3px solid white;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.connect-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.connect-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.connect-btn::before,
+.connect-btn::after {
+    content: '';
+    position: absolute;
+    background: white;
+}
+
+.connect-btn::before {
+    width: 20px;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.connect-btn::after {
+    width: 3px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Regular buttons */
+button:not(.connect-btn) {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 8px 4px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+button:not(.connect-btn):hover {
+    background: #0056b3;
+}
+
+button:not(.connect-btn):disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.button-group {
+    margin-top: 20px;
+}
+
+#error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    border: 1px solid #f5c6cb;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+h2 {
+    margin-top: 0;
+    color: #fff;
+    border-bottom: 2px solid #4a4a4a;
+    padding-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .info-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    body {
+        padding: 10px;
+    }
+}

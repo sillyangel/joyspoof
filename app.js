@@ -73,7 +73,6 @@ class JoyConApp {
                 this.displayControllerInfo();
                 this.setupControllerColors();
                 this.showControllerSection();
-                connectBtn.textContent = 'Connected';
             }
         } catch (error) {
             console.error('Connection failed:', error);
@@ -116,6 +115,15 @@ class JoyConApp {
         document.getElementById('button-color').value = this.controller.buttonColor;
         document.getElementById('left-grip-color').value = this.controller.leftGripColor;
         document.getElementById('right-grip-color').value = this.controller.rightGripColor;
+        const leftGripSection = document.querySelector('.color-input:has(#left-grip-color)');
+        const rightGripSection = document.querySelector('.color-input:has(#right-grip-color)');
+        if (this.controller.type === 'procon') {
+            leftGripSection.style.display = 'block';
+            rightGripSection.style.display = 'block';
+        } else {
+            leftGripSection.style.display = 'none';
+            rightGripSection.style.display = 'none';
+        }
         this.updateAllControllerColors();
     }
     updateControllerColor(inputId, color) {
