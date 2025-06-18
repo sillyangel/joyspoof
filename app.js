@@ -43,7 +43,6 @@ async function connectController() {
   }
 }
 
-// Remove the old presetColors array and add this function
 async function loadPresets() {
   try {
     const response = await fetch('./presets.json');
@@ -51,7 +50,6 @@ async function loadPresets() {
     return presets;
   } catch (error) {
     console.error('Failed to load presets:', error);
-    // Fallback to basic colors if presets.json fails to load
     return {
       Retails: [
         { name: "Gray", bodyHex: "#828282", buttonHex: "#0F0F0F" },
@@ -64,17 +62,15 @@ async function loadPresets() {
 
 class JoyConApp {
     constructor() {
-        this.controller = null;
-        this.originalColors = {};
+        this.controllers = [];
         this.presets = null;
+        this.controllerCount = 0;
         this.initializeApp();
     }
 
     async initializeApp() {
-        // Load presets first
         this.presets = await loadPresets();
         this.setupEventListeners();
-        this.createPresetColors();
         this.checkHIDSupport();
     }
 
@@ -89,139 +85,234 @@ class JoyConApp {
         document.getElementById('connect-btn').addEventListener('click', () => {
             this.connectToController();
         });
+    }
 
+    createControllerSection(controller, index) {
+        const controllerSection = document.createElement('div');
+        controllerSection.className = 'controller-section';
+        controllerSection.id = `controller-section-${index}`;
+
+        // Add HR divider if not the first controller
+        if (index > 0) {
+            const divider = document.createElement('hr');
+            divider.className = 'controller-divider';
+            document.getElementById('controllers-container').appendChild(divider);
+        }
+
+        controllerSection.innerHTML = `
+            <div class="main-container">
+                <div class="left-panel">
+                    <div class="controller-info">
+                        <h2>Controller ${index + 1} Information</h2>
+                        <div class="controller-details">
+                            <div><strong>Name:</strong> <span id="product-name-${index}"></span></div>
+                            <div><strong>Type:</strong> <span id="controller-type-${index}"></span></div>
+                            <div><strong>MAC Address:</strong> <span id="mac-address-${index}"></span></div>
+                            <div><strong>Serial Number:</strong> <span id="serial-number-${index}"></span></div>
+                            <div><strong>Firmware:</strong> <span id="firmware-${index}"></span></div>
+                            <div class="battery-info">
+                                <strong>Battery:</strong> 
+                                <span id="voltage-${index}"></span>V
+                                <object id="battery-icon-${index}" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="middle-panel">
+                    <div class="controller-preview">
+                        <object id="controller-image-${index}" type="image/svg+xml" class="controller-image"></object>
+                    </div>
+                </div>
+                
+                <div class="right-panel">
+                    <div class="color-customization">
+                        <h2>Color Customization</h2>
+                        <div class="color-inputs">
+                            <div class="color-input">
+                                <label for="body-color-${index}">Body Color</label>
+                                <input type="color" id="body-color-${index}" value="#828282">
+                                <div class="preset-colors" data-target="body-color-${index}"></div>
+                            </div>
+                            <div class="color-input">
+                                <label for="button-color-${index}">Button Color</label>
+                                <input type="color" id="button-color-${index}" value="#828282">
+                                <div class="preset-colors" data-target="button-color-${index}"></div>
+                            </div>
+                            <div class="color-input" id="left-grip-section-${index}">
+                                <label for="left-grip-color-${index}">Left Grip Color</label>
+                                <input type="color" id="left-grip-color-${index}" value="#828282">
+                                <div class="preset-colors" data-target="left-grip-color-${index}"></div>
+                            </div>
+                            <div class="color-input" id="right-grip-section-${index}">
+                                <label for="right-grip-color-${index}">Right Grip Color</label>
+                                <input type="color" id="right-grip-color-${index}" value="#828282">
+                                <div class="preset-colors" data-target="right-grip-color-${index}"></div>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button id="submit-color-btn-${index}">Submit Colors</button>
+                            <button id="reset-color-btn-${index}">Reset Colors</button>
+                            <button id="disconnect-btn-${index}" class="disconnect-btn">Disconnect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('controllers-container').appendChild(controllerSection);
+        
+        // Setup event listeners for this controller
+        this.setupControllerEventListeners(controller, index);
+        this.createPresetColors(index);
+        this.displayControllerInfo(controller, index);
+        this.setupControllerColors(controller, index);
+    }
+
+    setupControllerEventListeners(controller, index) {
         ['body-color', 'button-color', 'left-grip-color', 'right-grip-color'].forEach(id => {
-            const input = document.getElementById(id);
+            const input = document.getElementById(`${id}-${index}`);
             input.addEventListener('input', (e) => {
-                this.updateControllerColor(id, e.target.value);
+                this.updateControllerColor(controller, id, e.target.value);
             });
         });
 
-        document.getElementById('submit-color-btn').addEventListener('click', () => {
-            this.submitColors();
+        document.getElementById(`submit-color-btn-${index}`).addEventListener('click', () => {
+            this.submitColors(controller, index);
         });
 
-        document.getElementById('reset-color-btn').addEventListener('click', () => {
-            this.resetColors();
+        document.getElementById(`reset-color-btn-${index}`).addEventListener('click', () => {
+            this.resetColors(controller, index);
+        });
+
+        document.getElementById(`disconnect-btn-${index}`).addEventListener('click', () => {
+            this.disconnectController(index);
         });
     }
 
-
-createPresetColors() {
-    if (!this.presets) return;
-    
-    const presetContainers = document.querySelectorAll('.preset-colors');
-    
-    presetContainers.forEach(container => {
-        const targetId = container.dataset.target;
+    createPresetColors(index) {
+        if (!this.presets) return;
         
-        // Combine all presets from different categories
-        const allPresets = [
-            ...this.presets.Retails,
-            ...(this.presets.SpecialColors || [])
-        ];
+        const presetContainers = document.querySelectorAll(`#controller-section-${index} .preset-colors`);
         
-        // Create individual color elements for each preset
-        allPresets.forEach(preset => {
-            let color = null;
+        presetContainers.forEach(container => {
+            const targetId = container.dataset.target;
+            const baseTargetId = targetId.replace(`-${index}`, '');
             
-            // Determine which color to use based on target
-            if (targetId === 'body-color' || targetId === 'left-grip-color' || targetId === 'right-grip-color') {
-                color = preset.bodyHex;
-            } else if (targetId === 'button-color') {
-                color = preset.buttonHex;
-            }
+            const allPresets = [
+                ...this.presets.Retails,
+                ...(this.presets.SpecialColors || [])
+            ];
             
-            if (color) {
-                const colorDiv = document.createElement('div');
-                colorDiv.className = 'preset-color';
-                colorDiv.style.backgroundColor = color;
+            allPresets.forEach(preset => {
+                let color = null;
                 
-                // Create tooltip text with color hex and preset name
-                const tooltip = `${color}\n${preset.name}`;
-                colorDiv.setAttribute('data-tooltip', tooltip);
-                colorDiv.title = tooltip;
+                if (baseTargetId === 'body-color' || baseTargetId === 'left-grip-color' || baseTargetId === 'right-grip-color') {
+                    color = preset.bodyHex;
+                } else if (baseTargetId === 'button-color') {
+                    color = preset.buttonHex;
+                }
                 
-                colorDiv.addEventListener('click', () => {
-                    document.getElementById(targetId).value = color;
-                    this.updateControllerColor(targetId, color);
-                });
-                
-                container.appendChild(colorDiv);
-            }
+                if (color) {
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'preset-color';
+                    colorDiv.style.backgroundColor = color;
+                    
+                    const tooltip = `${color}\n${preset.name}`;
+                    colorDiv.setAttribute('data-tooltip', tooltip);
+                    colorDiv.title = tooltip;
+                    
+                    colorDiv.addEventListener('click', () => {
+                        document.getElementById(targetId).value = color;
+                        this.updateControllerColor(this.controllers[index], baseTargetId, color);
+                    });
+                    
+                    container.appendChild(colorDiv);
+                }
+            });
         });
-    });
-}
-
+    }
 
     async connectToController() {
         const connectBtn = document.getElementById('connect-btn');
         
         try {
             this.hideError();
-            this.controller = await connectController();
+            connectBtn.disabled = true;
             
-            if (this.controller) {
-                this.displayControllerInfo();
-                this.setupControllerColors();
-                this.showControllerSection();
+            const controller = await connectController();
+            
+            if (controller) {
+                // Store original colors
+                controller.originalColors = {
+                    bodyColor: controller.bodyColor,
+                    buttonColor: controller.buttonColor,
+                    leftGripColor: controller.leftGripColor,
+                    rightGripColor: controller.rightGripColor
+                };
+                
+                this.controllers.push(controller);
+                const index = this.controllers.length - 1;
+                
+                this.createControllerSection(controller, index);
+                this.showControllersContainer();
             }
         } catch (error) {
             console.error('Connection failed:', error);
             this.showError(`Failed to connect: ${error}`);
+        } finally {
             connectBtn.disabled = false;
-            connectBtn.textContent = 'Connect Controller';
+            connectBtn.textContent = '';
         }
     }
 
-    // ...existing code...
-    displayControllerInfo() {
-        if (!this.controller) return;
-        document.getElementById('product-name').textContent = this.controller.productName;
-        document.getElementById('controller-type').textContent = this.controller.type;
-        document.getElementById('mac-address').textContent = this.controller.macAddr;
-        document.getElementById('serial-number').textContent = this.controller.serialNumber;
-        document.getElementById('firmware').textContent = this.controller.firmware;
-        document.getElementById('voltage').textContent = this.controller.voltage.toFixed(2);
-        const controllerImage = document.getElementById('controller-image');
-        if (this.controller.image) {
-            controllerImage.data = this.controller.image;
+    displayControllerInfo(controller, index) {
+        if (!controller) return;
+        document.getElementById(`product-name-${index}`).textContent = controller.productName;
+        document.getElementById(`controller-type-${index}`).textContent = controller.type;
+        document.getElementById(`mac-address-${index}`).textContent = controller.macAddr;
+        document.getElementById(`serial-number-${index}`).textContent = controller.serialNumber;
+        document.getElementById(`firmware-${index}`).textContent = controller.firmware;
+        document.getElementById(`voltage-${index}`).textContent = controller.voltage.toFixed(2);
+        
+        const controllerImage = document.getElementById(`controller-image-${index}`);
+        if (controller.image) {
+            controllerImage.data = controller.image;
             controllerImage.addEventListener('load', () => {
-                previewColor(controllerImage, this.controller);
+                previewColor(controllerImage, controller);
             });
         }
-        const batteryIcon = document.getElementById('battery-icon');
+        
+        const batteryIcon = document.getElementById(`battery-icon-${index}`);
         batteryIcon.addEventListener('load', () => {
-            setBatteryCapacity(batteryIcon, this.controller.voltage);
+            setBatteryCapacity(batteryIcon, controller.voltage);
         });
     }
 
-    setupControllerColors() {
-        if (!this.controller) return;
-        this.originalColors = {
-            bodyColor: this.controller.bodyColor,
-            buttonColor: this.controller.buttonColor,
-            leftGripColor: this.controller.leftGripColor,
-            rightGripColor: this.controller.rightGripColor
-        };
-        document.getElementById('body-color').value = this.controller.bodyColor;
-        document.getElementById('button-color').value = this.controller.buttonColor;
-        document.getElementById('left-grip-color').value = this.controller.leftGripColor;
-        document.getElementById('right-grip-color').value = this.controller.rightGripColor;
-        const leftGripSection = document.querySelector('.color-input:has(#left-grip-color)');
-        const rightGripSection = document.querySelector('.color-input:has(#right-grip-color)');
-        if (this.controller.type === 'procon') {
+    setupControllerColors(controller, index) {
+        if (!controller) return;
+        
+        document.getElementById(`body-color-${index}`).value = controller.bodyColor;
+        document.getElementById(`button-color-${index}`).value = controller.buttonColor;
+        document.getElementById(`left-grip-color-${index}`).value = controller.leftGripColor;
+        document.getElementById(`right-grip-color-${index}`).value = controller.rightGripColor;
+        
+        const leftGripSection = document.getElementById(`left-grip-section-${index}`);
+        const rightGripSection = document.getElementById(`right-grip-section-${index}`);
+        
+        if (controller.type === 'procon') {
             leftGripSection.style.display = 'block';
             rightGripSection.style.display = 'block';
         } else {
             leftGripSection.style.display = 'none';
             rightGripSection.style.display = 'none';
         }
-        this.updateAllControllerColors();
+        
+        this.updatePreview(controller, index);
     }
 
-    updateControllerColor(inputId, color) {
-        if (!this.controller) return;
+    updateControllerColor(controller, inputId, color) {
+        if (!controller) return;
         const colorMap = {
             'body-color': 'bodyColor',
             'button-color': 'buttonColor',
@@ -230,34 +321,26 @@ createPresetColors() {
         };
         const property = colorMap[inputId];
         if (property) {
-            this.controller[property] = color;
-            this.updatePreview();
+            controller[property] = color;
+            const index = this.controllers.indexOf(controller);
+            this.updatePreview(controller, index);
         }
     }
 
-    updateAllControllerColors() {
-        if (!this.controller) return;
-        this.controller.bodyColor = document.getElementById('body-color').value;
-        this.controller.buttonColor = document.getElementById('button-color').value;
-        this.controller.leftGripColor = document.getElementById('left-grip-color').value;
-        this.controller.rightGripColor = document.getElementById('right-grip-color').value;
-        this.updatePreview();
-    }
-
-    updatePreview() {
-        const controllerImage = document.getElementById('controller-image');
+    updatePreview(controller, index) {
+        const controllerImage = document.getElementById(`controller-image-${index}`);
         if (controllerImage.contentDocument) {
-            previewColor(controllerImage, this.controller);
+            previewColor(controllerImage, controller);
         }
     }
 
-    async submitColors() {
-        if (!this.controller) return;
-        const submitBtn = document.getElementById('submit-color-btn');
+    async submitColors(controller, index) {
+        if (!controller) return;
+        const submitBtn = document.getElementById(`submit-color-btn-${index}`);
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
         try {
-            await this.controller.submitColor();
+            await controller.submitColor();
             alert('Colors submitted successfully!');
         } catch (error) {
             console.error('Submit failed:', error);
@@ -268,17 +351,83 @@ createPresetColors() {
         }
     }
 
-    resetColors() {
-        if (!this.controller || !this.originalColors.bodyColor) return;
-        document.getElementById('body-color').value = this.originalColors.bodyColor;
-        document.getElementById('button-color').value = this.originalColors.buttonColor;
-        document.getElementById('left-grip-color').value = this.originalColors.leftGripColor;
-        document.getElementById('right-grip-color').value = this.originalColors.rightGripColor;
-        this.updateAllControllerColors();
+    resetColors(controller, index) {
+        if (!controller || !controller.originalColors.bodyColor) return;
+        document.getElementById(`body-color-${index}`).value = controller.originalColors.bodyColor;
+        document.getElementById(`button-color-${index}`).value = controller.originalColors.buttonColor;
+        document.getElementById(`left-grip-color-${index}`).value = controller.originalColors.leftGripColor;
+        document.getElementById(`right-grip-color-${index}`).value = controller.originalColors.rightGripColor;
+        
+        controller.bodyColor = controller.originalColors.bodyColor;
+        controller.buttonColor = controller.originalColors.buttonColor;
+        controller.leftGripColor = controller.originalColors.leftGripColor;
+        controller.rightGripColor = controller.originalColors.rightGripColor;
+        
+        this.updatePreview(controller, index);
     }
 
-    showControllerSection() {
-        document.getElementById('controller-section').classList.remove('hidden');
+    disconnectController(index) {
+        const controllerSection = document.getElementById(`controller-section-${index}`);
+        const controller = this.controllers[index];
+        
+        // Close the device connection
+        if (controller && controller._device) {
+            controller._device.close();
+        }
+        
+        // Remove from controllers array
+        this.controllers.splice(index, 1);
+        
+        // Remove the controller section
+        controllerSection.remove();
+        
+        // Remove the divider if it exists
+        const dividers = document.querySelectorAll('.controller-divider');
+        if (dividers.length > 0) {
+            dividers[dividers.length - 1].remove();
+        }
+        
+        // Hide container if no controllers
+        if (this.controllers.length === 0) {
+            document.getElementById('controllers-container').classList.add('hidden');
+        }
+        
+        // Re-index remaining controllers
+        this.reindexControllers();
+    }
+
+    reindexControllers() {
+        const sections = document.querySelectorAll('.controller-section');
+        sections.forEach((section, newIndex) => {
+            section.id = `controller-section-${newIndex}`;
+            
+            // Update all IDs within the section
+            const elementsWithIds = section.querySelectorAll('[id]');
+            elementsWithIds.forEach(element => {
+                const oldId = element.id;
+                const baseId = oldId.replace(/-\d+$/, '');
+                element.id = `${baseId}-${newIndex}`;
+            });
+            
+            // Update data-target attributes
+            const presetContainers = section.querySelectorAll('.preset-colors');
+            presetContainers.forEach(container => {
+                const oldTarget = container.dataset.target;
+                const baseTarget = oldTarget.replace(/-\d+$/, '');
+                container.dataset.target = `${baseTarget}-${newIndex}`;
+            });
+            
+            // Update header
+            const header = section.querySelector('h2');
+            header.textContent = `Controller ${newIndex + 1} Information`;
+            
+            // Re-setup event listeners
+            this.setupControllerEventListeners(this.controllers[newIndex], newIndex);
+        });
+    }
+
+    showControllersContainer() {
+        document.getElementById('controllers-container').classList.remove('hidden');
     }
 
     showError(message) {

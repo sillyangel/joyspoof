@@ -322,3 +322,24 @@ h2 {
     border-top-color: #333;
     z-index: 1001;
 }
+
+
+.controller-section {
+    margin-bottom: 20px;
+}
+
+.controller-divider {
+    border: none;
+    border-top: 2px solid #4a4a4a;
+    margin: 40px 0;
+    opacity: 0.6;
+}
+
+.disconnect-btn {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+.disconnect-btn:hover {
+    background: #c82333 !important;
+}
