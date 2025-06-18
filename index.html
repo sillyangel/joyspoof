@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoySpoof</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222222 ;
+            max-width: 800px;
+            margin: 0 auto;
+            color: white;
+            padding: 20px;
+        }
+        .controller-info {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .color-input {
+            margin: 10px 0;
+        }
+        .color-input label {
+            display: inline-block;
+            width: 150px;
+        }
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 30px;
+            border: none;
+            cursor: pointer;
+        }
+        .preset-colors {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .preset-color {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .controller-image {
+            max-width: 300px;
+            height: auto;
+        }
+        .battery-info {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white;">JoySpoof</h1>
+    
+    <div id="connection-section">
+        <button id="connect-btn">Connect Controller</button>
+        <div id="error-message" class="hidden" style="color: red; margin: 10px 0;"></div>
+    </div>
+
+    <div id="controller-section" class="hidden">
+        <div class="controller-info">
+            <h2>Controller Information</h2>
+            <div id="controller-details">
+                <div><strong>Name:</strong> <span id="product-name"></span></div>
+                <div><strong>Type:</strong> <span id="controller-type"></span></div>
+                <div><strong>MAC Address:</strong> <span id="mac-address"></span></div>
+                <div><strong>Serial Number:</strong> <span id="serial-number"></span></div>
+                <div><strong>Firmware:</strong> <span id="firmware"></span></div>
+                <div class="battery-info">
+                    <strong>Battery:</strong> <span id="voltage"></span>V
+                    <object id="battery-icon" data="images/battery.svg" type="image/svg+xml" style="width: 50px; height: 20px;"></object>
+                </div>
+            </div>
+            
+            <div id="controller-preview">
+                <object id="controller-image" type="image/svg+xml" class="controller-image"></object>
+            </div>
+        </div>
+
+        <div class="controller-info">
+            <h2>Color Customization</h2>
+            
+            <div class="color-input">
+                <label for="body-color">Body Color:</label>
+                <input type="color" id="body-color" value="#828282">
+                <div class="preset-colors" data-target="body-color">
+                    <!-- Preset colors will be added here -->
+                </div>
+            </div>
+
+            <div class="color-input">
+                <label for="button-color">Button Color:</label>
+                <input type="color" id="button-color" value="#828282">
+                <div class="preset-colors" data-target="button-color">
+                    <!-- Preset colors will be added here -->
+                </div>
+            </div>
+
+            <div class="color-input">
+                <label for="left-grip-color">Left Grip Color:</label>
+                <input type="color" id="left-grip-color" value="#828282">
+                <div class="preset-colors" data-target="left-grip-color">
+                    <!-- Preset colors will be added here -->
+                </div>
+            </div>
+
+            <div class="color-input">
+                <label for="right-grip-color">Right Grip Color:</label>
+                <input type="color" id="right-grip-color" value="#828282">
+                <div class="preset-colors" data-target="right-grip-color">
+                    <!-- Preset colors will be added here -->
+                </div>
+            </div>
+
+            <div>
+                <button id="submit-color-btn">Submit Colors</button>
+                <button id="reset-color-btn">Reset to Original</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
