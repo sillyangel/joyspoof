@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JoySpoof - Demo Mode</title>
+    <title>Demo Mode</title>
     <link rel="icon" href="/images/favicon.jpg" type="image/jpeg">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="demo-styles.css">
 </head>
 <body>
     <div class="header-container">
-        <h1>JoySpoof - Demo Mode</h1>
+        <h1>Demo Mode</h1>
         <div class="header-controls">
             <div class="demo-controls">
                 <label for="controller-type-selector">Controller Type:</label>
                 <select id="controller-type-selector">
                     <option value="left-joycon">Joy-Con Left</option>
                     <option value="right-joycon">Joy-Con Right</option>
-                    <option value="procon">Pro Controller</option>
                 </select>
                 <button id="demo-reset-btn" class="demo-btn">Reset to OLED White</button>
-                <button id="randomize-btn" class="demo-btn">Randomize Colors</button>
             </div>
             <div class="mode-switch">
                 <a href="index.html" class="mode-link">Switch to Hardware Mode</a>
@@ -47,18 +45,14 @@
 
                 <div class="color-presets-section">
                     <h3>Color Presets</h3>
-                    <div class="preset-categories">
-                        <div class="preset-category">
-                            <h4>OLED Edition Colors</h4>
-                            <div id="oled-presets" class="preset-grid"></div>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label for="demo-body-presets">Body Color Presets</label>
+                            <div class="preset-colors" data-target="demo-body-color"></div>
                         </div>
-                        <div class="preset-category">
-                            <h4>Retail Colors</h4>
-                            <div id="retail-presets" class="preset-grid"></div>
-                        </div>
-                        <div class="preset-category">
-                            <h4>Special Colors</h4>
-                            <div id="special-presets" class="preset-grid"></div>
+                        <div class="color-input">
+                            <label for="demo-button-presets">Button Color Presets</label>
+                            <div class="preset-colors" data-target="demo-button-color"></div>
                         </div>
                     </div>
                 </div>
@@ -111,23 +105,10 @@
                         </div>
                     </div>
                     
-                    <div class="color-harmony">
-                        <h3>Color Harmony Tools</h3>
-                        <div class="harmony-controls">
-                            <button id="generate-complementary" class="harmony-btn">Complementary</button>
-                            <button id="generate-triadic" class="harmony-btn">Triadic</button>
-                            <button id="generate-analogous" class="harmony-btn">Analogous</button>
-                            <button id="generate-monochromatic" class="harmony-btn">Monochromatic</button>
-                        </div>
-                    </div>
-                    
-                    <div class="export-section">
-                        <h3>Export Colors</h3>
-                        <div class="export-controls">
-                            <button id="export-json" class="export-btn">Export as JSON</button>
-                            <button id="export-css" class="export-btn">Export as CSS</button>
-                            <button id="share-colors" class="export-btn">Share Configuration</button>
-                        </div>
+                    <div class="button-group">
+                        <button id="export-json" class="export-btn">Export as JSON</button>
+                        <button id="export-css" class="export-btn">Export as CSS</button>
+                        <button id="share-colors" class="export-btn">Share Configuration</button>
                     </div>
                 </div>
             </div>

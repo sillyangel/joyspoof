@@ -1,96 +1,3 @@
-class ColorUtils {
-    static hexToHsl(hex) {
-        const r = parseInt(hex.slice(1, 3), 16) / 255;
-        const g = parseInt(hex.slice(3, 5), 16) / 255;
-        const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
-
-        if (max === min) {
-            h = s = 0;
-        } else {
-            const d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
-            h /= 6;
-        }
-
-        return [h * 360, s * 100, l * 100];
-    }
-
-    static hslToHex(h, s, l) {
-        h /= 360;
-        s /= 100;
-        l /= 100;
-
-        const hue2rgb = (p, q, t) => {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1/6) return p + (q - p) * 6 * t;
-            if (t < 1/2) return q;
-            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-            return p;
-        };
-
-        let r, g, b;
-        if (s === 0) {
-            r = g = b = l;
-        } else {
-            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            const p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
-            g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
-        }
-
-        const toHex = (c) => {
-            const hex = Math.round(c * 255).toString(16);
-            return hex.length === 1 ? '0' + hex : hex;
-        };
-
-        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-    }
-
-    static generateComplementary(hex) {
-        const [h, s, l] = this.hexToHsl(hex);
-        return this.hslToHex((h + 180) % 360, s, l);
-    }
-
-    static generateTriadic(hex) {
-        const [h, s, l] = this.hexToHsl(hex);
-        return [
-            this.hslToHex((h + 120) % 360, s, l),
-            this.hslToHex((h + 240) % 360, s, l)
-        ];
-    }
-
-    static generateAnalogous(hex) {
-        const [h, s, l] = this.hexToHsl(hex);
-        return [
-            this.hslToHex((h + 30) % 360, s, l),
-            this.hslToHex((h - 30 + 360) % 360, s, l)
-        ];
-    }
-
-    static generateMonochromatic(hex) {
-        const [h, s, l] = this.hexToHsl(hex);
-        return [
-            this.hslToHex(h, s, Math.max(0, l - 20)),
-            this.hslToHex(h, s, Math.min(100, l + 20))
-        ];
-    }
-
-    static getRandomColor() {
-        return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
-    }
-}
-
 class ThemeManager {
     constructor() {
         this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
@@ -182,8 +89,7 @@ class DemoController {
     getImagePath() {
         const imagePaths = {
             'left-joycon': 'images/Joy-Con_Left.svg',
-            'right-joycon': 'images/Joy-Con_Right.svg',
-            'procon': 'images/Pro-Controller.svg'
+            'right-joycon': 'images/Joy-Con_Right.svg'
         };
         return imagePaths[this.type];
     }
@@ -206,11 +112,11 @@ class JoyConDemo {
     async initializeApp() {
         this.presets = await this.loadPresets();
         this.setupEventListeners();
+        this.setupPresets();
         this.updateControllerImage();
         this.updateControllerInfo();
         this.updateGripVisibility();
         this.updateColorInputs();
-        this.setupPresets();
         
         // Load shared configuration from URL if present
         this.loadFromURL();
@@ -285,11 +191,6 @@ class JoyConDemo {
             this.resetToOLEDWhite();
         });
 
-        // Randomize button
-        document.getElementById('randomize-btn').addEventListener('click', () => {
-            this.randomizeColors();
-        });
-
         // Copy buttons
         document.getElementById('copy-body-color').addEventListener('click', () => {
             this.copyToClipboard(this.controller.bodyColor);
@@ -305,23 +206,6 @@ class JoyConDemo {
 
         document.getElementById('copy-right-grip-color').addEventListener('click', () => {
             this.copyToClipboard(this.controller.rightGripColor);
-        });
-
-        // Harmony buttons
-        document.getElementById('generate-complementary').addEventListener('click', () => {
-            this.generateComplementaryColors();
-        });
-
-        document.getElementById('generate-triadic').addEventListener('click', () => {
-            this.generateTriadicColors();
-        });
-
-        document.getElementById('generate-analogous').addEventListener('click', () => {
-            this.generateAnalogousColors();
-        });
-
-        document.getElementById('generate-monochromatic').addEventListener('click', () => {
-            this.generateMonochromaticColors();
         });
 
         // Export buttons
@@ -340,72 +224,50 @@ class JoyConDemo {
 
     setupPresets() {
         if (!this.presets) return;
-
-        // OLED Edition presets
-        const oledPresets = this.presets.SpecialColors?.filter(preset => 
-            preset.name.includes('OLED')
-        ) || [];
-        this.createPresetSection('oled-presets', oledPresets);
-
-        // Retail presets
-        this.createPresetSection('retail-presets', this.presets.Retails || []);
-
-        // Special presets (excluding OLED)
-        const specialPresets = this.presets.SpecialColors?.filter(preset => 
-            !preset.name.includes('OLED')
-        ) || [];
-        this.createPresetSection('special-presets', specialPresets);
-    }
-
-    createPresetSection(containerId, presets) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        presets.forEach(preset => {
-            const presetItem = document.createElement('div');
-            presetItem.className = 'preset-item';
-            presetItem.dataset.name = preset.name;
-            presetItem.title = `${preset.name}\\nBody: ${preset.bodyHex}\\nButton: ${preset.buttonHex}`;
-            
-            const bodyDiv = document.createElement('div');
-            bodyDiv.className = 'preset-body';
-            bodyDiv.style.backgroundColor = preset.bodyHex;
-            
-            const buttonDiv = document.createElement('div');
-            buttonDiv.className = 'preset-button';
-            buttonDiv.style.backgroundColor = preset.buttonHex;
-            
-            presetItem.appendChild(bodyDiv);
-            presetItem.appendChild(buttonDiv);
-            
-            presetItem.addEventListener('click', () => {
-                this.applyPreset(preset);
-            });
-            
-            container.appendChild(presetItem);
-        });
-    }
-
-    applyPreset(preset) {
-        this.controller.bodyColor = preset.bodyHex;
-        this.controller.buttonColor = preset.buttonHex;
-        this.controller.leftGripColor = preset.bodyHex;
-        this.controller.rightGripColor = preset.bodyHex;
         
-        this.currentPreset = preset;
-        this.updateColorInputs();
-        this.updatePreview();
-        this.updateColorSchemeIndicator(preset.name);
-        this.updateActivePreset(preset);
+        const presetContainers = document.querySelectorAll('.preset-colors');
+        
+        presetContainers.forEach(container => {
+            const targetId = container.dataset.target;
+            const baseTargetId = targetId.replace('demo-', '').replace('-color', '');
+            
+            const allPresets = [
+                ...(this.presets.Retails || []),
+                ...(this.presets.SpecialColors || [])
+            ];
+            
+            allPresets.forEach(preset => {
+                let color = null;
+                
+                if (baseTargetId === 'body') {
+                    color = preset.bodyHex;
+                } else if (baseTargetId === 'button') {
+                    color = preset.buttonHex;
+                }
+                
+                if (color) {
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'preset-color';
+                    colorDiv.style.backgroundColor = color;
+                    
+                    const tooltip = `${color}\n${preset.name}`;
+                    colorDiv.setAttribute('data-tooltip', tooltip);
+                    colorDiv.title = tooltip;
+                    
+                    colorDiv.addEventListener('click', () => {
+                        document.getElementById(targetId).value = color;
+                        const colorType = baseTargetId === 'body' ? 'body' : 'button';
+                        this.updateColor(colorType, color);
+                    });
+                    
+                    container.appendChild(colorDiv);
+                }
+            });
+        });
     }
 
-    updateActivePreset(preset) {
-        document.querySelectorAll('.preset-item').forEach(item => {
-            item.classList.remove('active');
-            if (item.dataset.name === preset.name) {
-                item.classList.add('active');
-            }
-        });
+    clearActivePresets() {
+        // No longer needed since we removed the preset grid
     }
 
     changeControllerType(type) {
@@ -416,156 +278,15 @@ class JoyConDemo {
         this.updatePreview();
     }
 
-    updateControllerImage() {
-        const image = document.getElementById('demo-controller-image');
-        image.data = this.controller.image;
-        
-        // Add a small delay to ensure the SVG loads properly
-        setTimeout(() => {
-            if (image.contentDocument) {
-                this.updatePreview();
-            } else {
-                image.addEventListener('load', () => {
-                    this.updatePreview();
-                });
-            }
-        }, 100);
-    }
-
-    updateControllerInfo() {
-        const typeNames = {
-            'left-joycon': 'Joy-Con Left',
-            'right-joycon': 'Joy-Con Right',
-            'procon': 'Pro Controller'
-        };
-        
-        document.getElementById('demo-controller-type').textContent = typeNames[this.controller.type];
-    }
-
-    updateGripVisibility() {
-        const leftGripSection = document.getElementById('demo-left-grip-section');
-        const rightGripSection = document.getElementById('demo-right-grip-section');
-        
-        if (this.controller.type === 'procon') {
-            leftGripSection.style.display = 'block';
-            rightGripSection.style.display = 'block';
-        } else {
-            leftGripSection.style.display = 'none';
-            rightGripSection.style.display = 'none';
-        }
-    }
-
-    updateColor(type, color) {
-        const colorMap = {
-            'body': 'bodyColor',
-            'button': 'buttonColor',
-            'leftGrip': 'leftGripColor',
-            'rightGrip': 'rightGripColor'
-        };
-        
-        this.controller[colorMap[type]] = color;
-        this.updateColorInputs();
-        this.updatePreview();
-        this.currentPreset = null;
-        this.updateColorSchemeIndicator('Custom');
-        this.clearActivePresets();
-    }
-
-    updateColorInputs() {
-        document.getElementById('demo-body-color').value = this.controller.bodyColor;
-        document.getElementById('demo-body-hex').value = this.controller.bodyColor;
-        
-        document.getElementById('demo-button-color').value = this.controller.buttonColor;
-        document.getElementById('demo-button-hex').value = this.controller.buttonColor;
-        
-        document.getElementById('demo-left-grip-color').value = this.controller.leftGripColor;
-        document.getElementById('demo-left-grip-hex').value = this.controller.leftGripColor;
-        
-        document.getElementById('demo-right-grip-color').value = this.controller.rightGripColor;
-        document.getElementById('demo-right-grip-hex').value = this.controller.rightGripColor;
-    }
-
-    updatePreview() {
-        const image = document.getElementById('demo-controller-image');
-        if (image.contentDocument) {
-            previewColor(image, this.controller);
-        }
-    }
-
-    updateColorSchemeIndicator(name) {
-        document.getElementById('demo-color-scheme').textContent = name;
-    }
-
-    clearActivePresets() {
-        document.querySelectorAll('.preset-item').forEach(item => {
-            item.classList.remove('active');
-        });
-    }
-
     resetToOLEDWhite() {
-        const oledWhite = { name: "OLED Edition White", bodyHex: "#E6E6E6", buttonHex: "#323232" };
-        this.applyPreset(oledWhite);
-    }
-
-    randomizeColors() {
-        this.controller.bodyColor = ColorUtils.getRandomColor();
-        this.controller.buttonColor = ColorUtils.getRandomColor();
-        this.controller.leftGripColor = ColorUtils.getRandomColor();
-        this.controller.rightGripColor = ColorUtils.getRandomColor();
+        this.controller.bodyColor = '#E6E6E6';
+        this.controller.buttonColor = '#323232';
+        this.controller.leftGripColor = '#E6E6E6';
+        this.controller.rightGripColor = '#E6E6E6';
         
         this.updateColorInputs();
         this.updatePreview();
-        this.currentPreset = null;
-        this.updateColorSchemeIndicator('Random');
-        this.clearActivePresets();
-    }
-
-    generateComplementaryColors() {
-        const complementary = ColorUtils.generateComplementary(this.controller.bodyColor);
-        this.controller.buttonColor = complementary;
-        this.updateColorInputs();
-        this.updatePreview();
-        this.updateColorSchemeIndicator('Complementary');
-        this.clearActivePresets();
-    }
-
-    generateTriadicColors() {
-        const triadic = ColorUtils.generateTriadic(this.controller.bodyColor);
-        this.controller.buttonColor = triadic[0];
-        if (this.controller.type === 'procon') {
-            this.controller.leftGripColor = triadic[1];
-            this.controller.rightGripColor = triadic[0];
-        }
-        this.updateColorInputs();
-        this.updatePreview();
-        this.updateColorSchemeIndicator('Triadic');
-        this.clearActivePresets();
-    }
-
-    generateAnalogousColors() {
-        const analogous = ColorUtils.generateAnalogous(this.controller.bodyColor);
-        this.controller.buttonColor = analogous[0];
-        if (this.controller.type === 'procon') {
-            this.controller.leftGripColor = analogous[1];
-            this.controller.rightGripColor = analogous[0];
-        }
-        this.updateColorInputs();
-        this.updatePreview();
-        this.updateColorSchemeIndicator('Analogous');
-        this.clearActivePresets();
-    }
-
-    generateMonochromaticColors() {
-        const monochromatic = ColorUtils.generateMonochromatic(this.controller.bodyColor);
-        this.controller.buttonColor = monochromatic[0];
-        if (this.controller.type === 'procon') {
-            this.controller.leftGripColor = monochromatic[1];
-            this.controller.rightGripColor = monochromatic[0];
-        }
-        this.updateColorInputs();
-        this.updatePreview();
-        this.updateColorSchemeIndicator('Monochromatic');
-        this.clearActivePresets();
+        this.updateColorSchemeIndicator('OLED Edition White');
     }
 
     exportAsJSON() {
@@ -670,6 +391,81 @@ class JoyConDemo {
                 console.error('Failed to load shared configuration:', error);
             }
         }
+    }
+
+    updateControllerImage() {
+        const image = document.getElementById('demo-controller-image');
+        image.data = this.controller.image;
+        
+        // Add a small delay to ensure the SVG loads properly
+        setTimeout(() => {
+            if (image.contentDocument) {
+                this.updatePreview();
+            } else {
+                image.addEventListener('load', () => {
+                    this.updatePreview();
+                });
+            }
+        }, 100);
+    }
+
+    updateControllerInfo() {
+        const typeNames = {
+            'left-joycon': 'Joy-Con Left',
+            'right-joycon': 'Joy-Con Right'
+        };
+        
+        document.getElementById('demo-controller-type').textContent = typeNames[this.controller.type];
+    }
+
+    updateGripVisibility() {
+        const leftGripSection = document.getElementById('demo-left-grip-section');
+        const rightGripSection = document.getElementById('demo-right-grip-section');
+        
+        // Always hide grip sections since we removed Pro Controller
+        leftGripSection.style.display = 'none';
+        rightGripSection.style.display = 'none';
+    }
+
+    updateColor(type, color) {
+        const colorMap = {
+            'body': 'bodyColor',
+            'button': 'buttonColor',
+            'leftGrip': 'leftGripColor',
+            'rightGrip': 'rightGripColor'
+        };
+        
+        this.controller[colorMap[type]] = color;
+        this.updateColorInputs();
+        this.updatePreview();
+        this.currentPreset = null;
+        this.updateColorSchemeIndicator('Custom');
+        this.clearActivePresets();
+    }
+
+    updateColorInputs() {
+        document.getElementById('demo-body-color').value = this.controller.bodyColor;
+        document.getElementById('demo-body-hex').value = this.controller.bodyColor;
+        
+        document.getElementById('demo-button-color').value = this.controller.buttonColor;
+        document.getElementById('demo-button-hex').value = this.controller.buttonColor;
+        
+        document.getElementById('demo-left-grip-color').value = this.controller.leftGripColor;
+        document.getElementById('demo-left-grip-hex').value = this.controller.leftGripColor;
+        
+        document.getElementById('demo-right-grip-color').value = this.controller.rightGripColor;
+        document.getElementById('demo-right-grip-hex').value = this.controller.rightGripColor;
+    }
+
+    updatePreview() {
+        const image = document.getElementById('demo-controller-image');
+        if (image.contentDocument) {
+            previewColor(image, this.controller);
+        }
+    }
+
+    updateColorSchemeIndicator(name) {
+        document.getElementById('demo-color-scheme').textContent = name;
     }
 }
 
