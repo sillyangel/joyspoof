@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoySpoof - Demo Mode</title>
+    <link rel="icon" href="/images/favicon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="demo-styles.css">
+</head>
+<body>
+    <div class="header-container">
+        <h1>JoySpoof - Demo Mode</h1>
+        <div class="header-controls">
+            <div class="demo-controls">
+                <label for="controller-type-selector">Controller Type:</label>
+                <select id="controller-type-selector">
+                    <option value="left-joycon">Joy-Con Left</option>
+                    <option value="right-joycon">Joy-Con Right</option>
+                    <option value="procon">Pro Controller</option>
+                </select>
+                <button id="demo-reset-btn" class="demo-btn">Reset to OLED White</button>
+                <button id="randomize-btn" class="demo-btn">Randomize Colors</button>
+            </div>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-link">Switch to Hardware Mode</a>
+                <button id="theme-toggle" class="theme-toggle" title="Toggle Theme">🌓</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <div class="main-container">
+            <div class="left-panel">
+                <div class="controller-info">
+                    <h2>Demo Controller Information</h2>
+                    <div class="controller-details">
+                        <div><strong>Name:</strong> <span id="demo-product-name">Nintendo Switch OLED Edition</span></div>
+                        <div><strong>Type:</strong> <span id="demo-controller-type">Joy-Con Left</span></div>
+                        <div><strong>Mode:</strong> <span class="demo-indicator">Preview Mode</span></div>
+                        <div><strong>Colors:</strong> <span id="demo-color-scheme">OLED White Edition</span></div>
+                        <div class="demo-note">
+                            <strong>Note:</strong> This is a preview mode. No actual controller is connected.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-presets-section">
+                    <h3>Color Presets</h3>
+                    <div class="preset-categories">
+                        <div class="preset-category">
+                            <h4>OLED Edition Colors</h4>
+                            <div id="oled-presets" class="preset-grid"></div>
+                        </div>
+                        <div class="preset-category">
+                            <h4>Retail Colors</h4>
+                            <div id="retail-presets" class="preset-grid"></div>
+                        </div>
+                        <div class="preset-category">
+                            <h4>Special Colors</h4>
+                            <div id="special-presets" class="preset-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="middle-panel">
+                <div class="controller-preview">
+                    <object id="demo-controller-image" type="image/svg+xml" class="controller-image" data="images/Joy-Con_Left.svg"></object>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="color-customization">
+                    <h2>Color Customization</h2>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label for="demo-body-color">Body Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="demo-body-color" value="#E6E6E6">
+                                <input type="text" id="demo-body-hex" value="#E6E6E6" class="hex-input">
+                                <button id="copy-body-color" class="copy-btn" title="Copy to clipboard">📋</button>
+                            </div>
+                        </div>
+                        
+                        <div class="color-input">
+                            <label for="demo-button-color">Button Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="demo-button-color" value="#323232">
+                                <input type="text" id="demo-button-hex" value="#323232" class="hex-input">
+                                <button id="copy-button-color" class="copy-btn" title="Copy to clipboard">📋</button>
+                            </div>
+                        </div>
+                        
+                        <div class="color-input" id="demo-left-grip-section" style="display: none;">
+                            <label for="demo-left-grip-color">Left Grip Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="demo-left-grip-color" value="#E6E6E6">
+                                <input type="text" id="demo-left-grip-hex" value="#E6E6E6" class="hex-input">
+                                <button id="copy-left-grip-color" class="copy-btn" title="Copy to clipboard">📋</button>
+                            </div>
+                        </div>
+                        
+                        <div class="color-input" id="demo-right-grip-section" style="display: none;">
+                            <label for="demo-right-grip-color">Right Grip Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="demo-right-grip-color" value="#E6E6E6">
+                                <input type="text" id="demo-right-grip-hex" value="#E6E6E6" class="hex-input">
+                                <button id="copy-right-grip-color" class="copy-btn" title="Copy to clipboard">📋</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="color-harmony">
+                        <h3>Color Harmony Tools</h3>
+                        <div class="harmony-controls">
+                            <button id="generate-complementary" class="harmony-btn">Complementary</button>
+                            <button id="generate-triadic" class="harmony-btn">Triadic</button>
+                            <button id="generate-analogous" class="harmony-btn">Analogous</button>
+                            <button id="generate-monochromatic" class="harmony-btn">Monochromatic</button>
+                        </div>
+                    </div>
+                    
+                    <div class="export-section">
+                        <h3>Export Colors</h3>
+                        <div class="export-controls">
+                            <button id="export-json" class="export-btn">Export as JSON</button>
+                            <button id="export-css" class="export-btn">Export as CSS</button>
+                            <button id="share-colors" class="export-btn">Share Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="demo.js"></script>
+</body>
+</html>
